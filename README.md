@@ -5,4 +5,5 @@ parse all folder.
 
 ### Example:
 `"l 2"` -> will parse with depth 2
+
 `"l"` -> will parse all folder
