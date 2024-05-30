@@ -21,7 +21,7 @@ class COLORS:
 def colored_print(name: str, is_folder: bool, adder_size: int, is_end=False) -> None:
     is_shadow = name[0] == '.'
     adder = '│  ' * adder_size
-    if is_end and not is_folder:
+    if is_end:
         adder += '└──'
     else:
         adder += '├──'
@@ -38,6 +38,11 @@ def colored_print(name: str, is_folder: bool, adder_size: int, is_end=False) -> 
         print(name)
 
 
+def is_empty(folder: str):
+    (_, folders, files) = next(walk(folder))
+    return len(folders) + len(files) == 0
+
+
 def ls(depth: int, current_folder='.', current_depth: int = 0) -> None:
     if depth == 0:
         return
@@ -50,9 +55,19 @@ def ls(depth: int, current_folder='.', current_depth: int = 0) -> None:
     all_items = sorted(folders + files)
     for item in all_items:
         if item in files:
-            colored_print(item, is_folder=False, adder_size=current_depth, is_end=(item == all_items[-1]))
+            colored_print(
+                item,
+                is_folder=False,
+                adder_size=current_depth,
+                is_end=(item == all_items[-1])
+            )
         else:  # folder
-            colored_print(item, is_folder=True, adder_size=current_depth, is_end=(item == all_items[-1]))
+            colored_print(
+                item,
+                is_folder=True,
+                adder_size=current_depth,
+                is_end=(item == all_items[-1] and (is_empty(current_folder + '/' + item) or depth == 1))
+            )
             ls(depth - 1, current_folder + '/' + item, current_depth=current_depth + 1)
 
 
@@ -64,9 +79,12 @@ def main():
     if len(sys.argv) == 2:
         depth = sys.argv[1]
     else:
-        depth = -1
+        depth = 1
     try:
-        depth = int(depth)
+        if depth == '.':
+            depth = -1
+        else:
+            depth = int(depth)
     except (ValueError, TypeError):
         print(f'Invalid parse depth value "{depth}"')
         return
