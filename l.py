@@ -35,7 +35,7 @@ def colored_print(name: str, is_folder: bool, adder_size: int, is_end=False) -> 
     if is_shadow:
         print(f'{COLORS.YELLOW}{name}{COLORS.END}')
     else:
-        print(name)
+        print(f'{COLORS.GREEN}{name}{COLORS.END}')
 
 
 def is_empty(folder: str):
